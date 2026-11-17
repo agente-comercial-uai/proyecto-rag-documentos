@@ -25,8 +25,10 @@ def buscar_documentos(pregunta: str) -> str:
     """
     resultados = _store().buscar(pregunta, k=3)
 
-    # Umbral simple: el indice usa producto interno normalizado (1 = identico).
-    relevantes = [r for r in resultados if r.get("score", 1.0) >= 0.0]
+    # Umbral de similitud coseno: solo trozos con score >= 0.70 se consideran
+    # relevantes. Calibrado con los 3 documentos: las preguntas que tienen
+    # respuesta puntuan 0.77-0.81, las que no, ~0.64.
+    relevantes = [r for r in resultados if r.get("score", 0.0) >= 0.70]
 
     if not relevantes:
         return "no está en los documentos"

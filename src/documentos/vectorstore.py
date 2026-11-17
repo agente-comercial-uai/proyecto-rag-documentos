@@ -34,14 +34,19 @@ class VectorStore:
         self.embeddings = embeddings
 
     def buscar(self, texto: str, k: int = 3) -> list[dict]:
-        """Devuelve los k trozos mas parecidos con su archivo y texto."""
+        """Devuelve los k trozos mas parecidos con su archivo, texto y score.
+
+        El score es la similitud coseno (IndexFlatIP sobre vectores
+        normalizados), con rango [-1, 1]: 1 = identico, 0 = ortogonal,
+        -1 = opuesto.
+        """
         v = np.array(self.embeddings.embed_query(texto), dtype="float32").reshape(1, -1)
         faiss.normalize_L2(v)
         distancias, ids = self.indice.search(v, k)
         resultados = []
-        for i in ids[0]:
-            if 0 <= i < len(self.datos):
-                resultados.append(self.datos[i])
+        for pos, idx in enumerate(ids[0]):
+            if 0 <= idx < len(self.datos):
+                resultados.append({**self.datos[idx], "score": float(distancias[0][pos])})
         return resultados
 
 
