@@ -1,0 +1,15 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Secretos
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Indice FAISS local (se regenera)
+faiss_index/
